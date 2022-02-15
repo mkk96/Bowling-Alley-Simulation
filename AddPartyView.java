@@ -42,7 +42,7 @@ import java.text.*;
 public class AddPartyView implements ActionListener, ListSelectionListener {
 
 	private int maxSize;
-
+	private int maxSize11;
 	private JFrame win;
 	private JButton addPatron, newPatron, remPatron, finished;
 	private JList partyList, allBowlers;
