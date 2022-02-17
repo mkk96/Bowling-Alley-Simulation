@@ -25,7 +25,7 @@ import java.io.*;
 class BowlerFile {
 
 	/** The location of the bowelr database */
-	private static String BOWLER_DAT = "BOWLERS.DAT";
+	private static String BOWLER_DAT = "D:\\IIIT Hyd\\2nd Sem\\SE\\BowlingAlley_new\\Bowling-Alley-Simulation\\BOWLERS.DAT";
 
     /**
      * Retrieves bowler information from the database and returns a Bowler objects with populated fields.
