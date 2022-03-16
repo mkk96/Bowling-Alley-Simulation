@@ -41,6 +41,19 @@ import java.text.*;
 
 public class AddPartyView implements ActionListener, ListSelectionListener {
 
+	public static final int colPanelRows = 1;
+	public static final int colPanelColumns = 3;
+	public static final int partyListFixedCellWidth = 120;
+	public static final int partyListVisibleRowCount = 5;
+	public static final int allBowlersVisibleRowCount = 8;
+	public static final int allBowlersFixedCellWidth = 120;
+	public static final int buttonPanelRows = 4;
+	public static final int buttonPanelColumns = 1;
+	public static final int buttonMarginBottom = 4;
+	public static final int buttonMarginLeft = 4;
+	public static final int buttonMarginRight = 4;
+	public static final int buttonMarginTop = 4;
+
 	private int maxSize;
 	private JFrame win;
 	private JButton addPatron, newPatron, remPatron, finished;
@@ -62,7 +75,7 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 		((JPanel) win.getContentPane()).setOpaque(false);
 
 		JPanel colPanel = new JPanel();
-		colPanel.setLayout(new GridLayout(1, 3));
+		colPanel.setLayout(new GridLayout(colPanelRows, colPanelColumns));
 
 		// Party Panel
 		JPanel partyPanel = new JPanel();
@@ -74,8 +87,8 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 		empty.add("(Empty)");
 
 		partyList = new JList(empty);
-		partyList.setFixedCellWidth(120);
-		partyList.setVisibleRowCount(5);
+		partyList.setFixedCellWidth(partyListFixedCellWidth);
+		partyList.setVisibleRowCount(partyListVisibleRowCount);
 		partyList.addListSelectionListener(this);
 		JScrollPane partyPane = new JScrollPane(partyList);
 		//        partyPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -93,8 +106,8 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 			bowlerdb = new Vector();
 		}
 		allBowlers = new JList(bowlerdb);
-		allBowlers.setVisibleRowCount(8);
-		allBowlers.setFixedCellWidth(120);
+		allBowlers.setVisibleRowCount(allBowlersVisibleRowCount);
+		allBowlers.setFixedCellWidth(allBowlersFixedCellWidth);
 		JScrollPane bowlerPane = new JScrollPane(allBowlers);
 		bowlerPane.setVerticalScrollBarPolicy(
 			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -103,9 +116,9 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 
 		// Button Panel
 		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout(new GridLayout(4, 1));
+		buttonPanel.setLayout(new GridLayout(buttonPanelRows, buttonPanelColumns));
 
-		Insets buttonMargin = new Insets(4, 4, 4, 4);
+		Insets buttonMargin = new Insets(buttonMarginBottom, buttonMarginLeft, buttonMarginRight, buttonMarginTop);
 
 		addPatron = new JButton("Add to Party");
 		JPanel addPatronPanel = new JPanel();

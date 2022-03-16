@@ -44,6 +44,8 @@ import java.util.*;
 import java.io.*;
 
 class ControlDesk extends Thread {
+	public static final int assignLaneThreadSleepTime = 250;
+
 	/** The collection of Lanes */
 	private HashSet lanes;
 
@@ -88,7 +90,7 @@ class ControlDesk extends Thread {
 			assignLane();
 			
 			try {
-				sleep(250);
+				sleep(assignLaneThreadSleepTime);
 			} catch (Exception e) {}
 		}
 	}

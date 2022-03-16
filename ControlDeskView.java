@@ -23,6 +23,12 @@ import java.util.*;
 
 public class ControlDeskView implements ActionListener, ControlDeskObserver {
 
+	public static final int controlsPanelRows = 3;
+	public static final int controlsPanelColumns = 1;
+	public static final int laneStatusPanelColumns = 1;
+	public static final int partyListFixedCellWidth = 120;
+	public static final int partyListVisibleRowCount = 10;
+
 	private JButton addParty, finished, assign;
 	private JFrame win;
 	private JList partyList;
@@ -52,7 +58,7 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 
 		// Controls Panel
 		JPanel controlsPanel = new JPanel();
-		controlsPanel.setLayout(new GridLayout(3, 1));
+		controlsPanel.setLayout(new GridLayout(controlsPanelRows, controlsPanelColumns));
 		controlsPanel.setBorder(new TitledBorder("Controls"));
 
 		addParty = new JButton("Add Party");
@@ -78,7 +84,7 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 
 		// Lane Status Panel
 		JPanel laneStatusPanel = new JPanel();
-		laneStatusPanel.setLayout(new GridLayout(numLanes, 1));
+		laneStatusPanel.setLayout(new GridLayout(numLanes, laneStatusPanelColumns));
 		laneStatusPanel.setBorder(new TitledBorder("Lane Status"));
 
 		HashSet lanes=controlDesk.getLanes();
@@ -103,8 +109,8 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 		empty.add("(Empty)");
 
 		partyList = new JList(empty);
-		partyList.setFixedCellWidth(120);
-		partyList.setVisibleRowCount(10);
+		partyList.setFixedCellWidth(partyListFixedCellWidth);
+		partyList.setVisibleRowCount(partyListVisibleRowCount);
 		JScrollPane partyPane = new JScrollPane(partyList);
 		partyPane.setVerticalScrollBarPolicy(
 			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);

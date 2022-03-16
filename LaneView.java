@@ -10,6 +10,8 @@ import java.util.*;
 
 public class LaneView implements LaneObserver, ActionListener {
 
+	public static final int panelRows = 0;
+	public static final int panelColumns = 1;
 	private int roll;
 	private boolean initDone = true;
 
@@ -64,7 +66,7 @@ public class LaneView implements LaneObserver, ActionListener {
 
 		JPanel panel = new JPanel();
 
-		panel.setLayout(new GridLayout(0, 1));
+		panel.setLayout(new GridLayout(panelRows, panelColumns));
 
 		balls = new JPanel[numBowlers][23];
 		ballLabel = new JLabel[numBowlers][23];

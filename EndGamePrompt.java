@@ -17,6 +17,16 @@ import java.text.*;
 
 public class EndGamePrompt implements ActionListener {
 
+	public static final int colPanelRows = 2;
+	public static final int colPanelCols = 1;
+	public static final int buttonPanelRows = 1;
+	public static final int buttonPanelCols = 2;
+	public static final int buttonMarginBottom = 4;
+	public static final int buttonMarginLeft = 4;
+	public static final int buttonMarginRight = 4;
+	public static final int buttonMarginTop = 4;
+	public static final int threadSleepTime = 10;
+
 	private JFrame win;
 	private JButton yesButton, noButton;
 
@@ -33,7 +43,7 @@ public class EndGamePrompt implements ActionListener {
 		((JPanel) win.getContentPane()).setOpaque(false);
 
 		JPanel colPanel = new JPanel();
-		colPanel.setLayout(new GridLayout( 2, 1 ));
+		colPanel.setLayout(new GridLayout(colPanelRows, colPanelCols));
 
 		// Label Panel
 		JPanel labelPanel = new JPanel();
@@ -46,9 +56,9 @@ public class EndGamePrompt implements ActionListener {
 
 		// Button Panel
 		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout(new GridLayout(1, 2));
+		buttonPanel.setLayout(new GridLayout(buttonPanelRows, buttonPanelCols));
 
-		Insets buttonMargin = new Insets(4, 4, 4, 4);
+		Insets buttonMargin = new Insets(buttonMarginBottom, buttonMarginLeft, buttonMarginRight, buttonMarginTop);
 
 		yesButton = new JButton("Yes");
 		JPanel yesButtonPanel = new JPanel();
@@ -95,7 +105,7 @@ public class EndGamePrompt implements ActionListener {
 	public int getResult() {
 		while ( result == 0 ) {
 			try {
-				Thread.sleep(10);
+				Thread.sleep(threadSleepTime);
 			} catch ( InterruptedException e ) {
 				System.err.println( "Interrupted" );
 			}

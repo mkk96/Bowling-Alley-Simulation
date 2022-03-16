@@ -14,6 +14,11 @@ import javax.swing.event.*;
 
 public class LaneStatusView implements ActionListener, LaneObserver, PinsetterObserver {
 
+	public static final int buttonMarginBottom = 4;
+	public static final int buttonMarginLeft = 4;
+	public static final int buttonMarginRight = 4;
+	public static final int buttonMarginTop = 4;
+
 	private JPanel jp;
 
 	private JLabel curBowler, foul, pinsDown;
@@ -57,7 +62,7 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new FlowLayout());
 
-		Insets buttonMargin = new Insets(4, 4, 4, 4);
+		Insets buttonMargin = new Insets(buttonMarginBottom, buttonMarginLeft, buttonMarginRight, buttonMarginTop);
 
 		viewLane = new JButton("View Lane");
 		JPanel viewLanePanel = new JPanel();

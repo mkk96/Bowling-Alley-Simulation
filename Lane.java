@@ -136,7 +136,8 @@ import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Date;
 
-public class Lane extends Thread implements PinsetterObserver {	
+public class Lane extends Thread implements PinsetterObserver {
+	public static final int gameHaltThreadSleepTime = 10;
 	private Party party;
 	private Pinsetter setter;
 	private HashMap scores;
@@ -195,7 +196,7 @@ public class Lane extends Thread implements PinsetterObserver {
 			
 				while (gameIsHalted) {
 					try {
-						sleep(10);
+						sleep(gameHaltThreadSleepTime);
 					} catch (Exception e) {}
 				}
 
