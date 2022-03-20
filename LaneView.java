@@ -299,7 +299,7 @@ public class LaneView implements LaneObserver, ActionListener {
 							{
 							x[k][i]++;}
 
-							//System.out.println(k+" "+i+"");
+							////System.out.println(k+" "+i+"");
 						/*}catch(Exception E){
 							System.out.println("Error loading image!");
 						}*/
