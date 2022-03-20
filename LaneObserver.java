@@ -10,8 +10,9 @@
  *
  *
  */
+import java.util.HashMap;
 
 public interface LaneObserver {
-	public void receiveLaneEvent(LaneEvent le);
+	public void receiveLaneEvent(Party pty, int theIndex, Bowler theBowler, int[][] theCumulScore, HashMap theScore, int theFrameNum, int[] theCurScores, int theBall, boolean mechProblem,boolean status,boolean game_completed);
 };
 
