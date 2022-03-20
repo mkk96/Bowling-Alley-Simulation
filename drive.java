@@ -8,8 +8,7 @@ public class drive {
 		int numLanes = 3;
 		int maxPatronsPerParty=6;
 
-		Alley a = new Alley( numLanes );
-		ControlDesk controlDesk = a.getControlDesk();
+		ControlDesk controlDesk = new ControlDesk(numLanes);
 
 		new ControlDeskView( controlDesk, maxPatronsPerParty);
 
