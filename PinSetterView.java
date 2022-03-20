@@ -22,7 +22,9 @@ import java.util.Vector;
 public class PinSetterView implements PinsetterObserver {
 
 
-    private Vector pinVect = new Vector ( );
+	public static final int pinsRows = 4;
+	public static final int pinsColumns = 7;
+	private Vector pinVect = new Vector ( );
     private JPanel firstRoll;
     private JPanel secondRoll;
 
@@ -49,7 +51,7 @@ public class PinSetterView implements PinsetterObserver {
 	
 	JPanel pins = new JPanel ( );
 	
-	pins.setLayout ( new GridLayout ( 4, 7 ) );
+	pins.setLayout ( new GridLayout (pinsRows, pinsColumns) );
 	
 	//********************Top of GUI indicates first or second roll
 	
