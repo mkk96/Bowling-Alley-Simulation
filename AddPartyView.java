@@ -42,6 +42,7 @@ import java.text.*;
 public class AddPartyView implements ActionListener, ListSelectionListener {
 
 	private int maxSize;
+
 	private JFrame win;
 	private JButton addPatron, newPatron, remPatron, finished;
 	private JList partyList, allBowlers;
@@ -51,6 +52,28 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 	private ControlDeskView controlDesk;
 
 	private String selectedNick, selectedMember;
+
+	//create a panel and then add button with givel label, return the panel created
+	private JPanel createPanelWithButton(String btnLabel){
+		JButton newButton = new JButton(btnLabel);
+		JPanel newPanel = new JPanel();
+		newPanel.setLayout(new FlowLayout());
+		newButton.addActionListener(this);
+		newPanel.add(newButton);
+		return newPanel;
+	}
+
+	//find and return the button that a panel contains..
+	//(So that we can set the global button variables.. these global variables are used to find the source of an event)
+	private JButton getButtonFromPanel(JPanel pnl){
+		Component[] comp = pnl.getComponents();
+		int i;
+		for (i = 0; i < comp.length; i++)
+			if (comp[i] instanceof JButton)
+				break;
+
+		return i<comp.length ? (JButton) comp[i] : null;
+	}
 
 	public AddPartyView(ControlDeskView controlDesk, int max) {
 
@@ -75,7 +98,7 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 
 		partyList = new JList(empty);
 		partyList.setFixedCellWidth(120);
-		partyList.setVisibleRowCount(5);
+		partyList.setVisibleRowCount(6);
 		partyList.addListSelectionListener(this);
 		JScrollPane partyPane = new JScrollPane(partyList);
 		//        partyPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -92,6 +115,7 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 			System.err.println("File Error");
 			bowlerdb = new Vector();
 		}
+
 		allBowlers = new JList(bowlerdb);
 		allBowlers.setVisibleRowCount(8);
 		allBowlers.setFixedCellWidth(120);
@@ -107,29 +131,16 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 
 		Insets buttonMargin = new Insets(4, 4, 4, 4);
 
-		addPatron = new JButton("Add to Party");
-		JPanel addPatronPanel = new JPanel();
-		addPatronPanel.setLayout(new FlowLayout());
-		addPatron.addActionListener(this);
-		addPatronPanel.add(addPatron);
-
-		remPatron = new JButton("Remove Member");
-		JPanel remPatronPanel = new JPanel();
-		remPatronPanel.setLayout(new FlowLayout());
-		remPatron.addActionListener(this);
-		remPatronPanel.add(remPatron);
-
-		newPatron = new JButton("New Patron");
-		JPanel newPatronPanel = new JPanel();
-		newPatronPanel.setLayout(new FlowLayout());
-		newPatron.addActionListener(this);
-		newPatronPanel.add(newPatron);
-
-		finished = new JButton("Finished");
-		JPanel finishedPanel = new JPanel();
-		finishedPanel.setLayout(new FlowLayout());
-		finished.addActionListener(this);
-		finishedPanel.add(finished);
+		//add panels and buttons in ADD MEMBER section
+		JPanel addPatronPanel = createPanelWithButton("Add to Party");
+		addPatron = getButtonFromPanel(addPatronPanel);
+		System.out.println("XX" + addPatron);
+		JPanel remPatronPanel = createPanelWithButton("Remove Member");
+		remPatron = getButtonFromPanel(remPatronPanel);
+		JPanel newPatronPanel = createPanelWithButton("New Patron");
+		newPatron = getButtonFromPanel(newPatronPanel);
+		JPanel finishedPanel = createPanelWithButton("Finished");
+		finished = getButtonFromPanel(finishedPanel);
 
 		buttonPanel.add(addPatronPanel);
 		buttonPanel.add(remPatronPanel);

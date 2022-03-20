@@ -11,6 +11,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
+import java.util.HashMap;
 
 public class LaneStatusView implements ActionListener, LaneObserver, PinsetterObserver {
 
@@ -88,8 +89,8 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
 
 		jp.add( cLabel );
 		jp.add( curBowler );
-//		jp.add( fLabel );
-//		jp.add( foul );
+		jp.add( fLabel );
+		jp.add( foul );
 		jp.add( pdLabel );
 		jp.add( pinsDown );
 		
@@ -132,9 +133,9 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
 		}
 	}
 
-	public void receiveLaneEvent(LaneEvent le) {
-		curBowler.setText( ( (Bowler)le.getBowler()).getNickName() );
-		if ( le.isMechanicalProblem() ) {
+	public void receiveLaneEvent(Party pty, int theIndex, Bowler theBowler, int[][] theCumulScore, HashMap theScore, int theFrameNum, int[] theCurScores, int theBall, boolean mechProblem,boolean status,boolean game_completed) {
+		curBowler.setText( ( (Bowler)theBowler).getNickName() );
+		if ( mechProblem ) {
 			maintenance.setBackground( Color.RED );
 		}	
 		if ( lane.isPartyAssigned() == false ) {
@@ -148,6 +149,7 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
 
 	public void receivePinsetterEvent(PinsetterEvent pe) {
 		pinsDown.setText( ( new Integer(pe.totalPinsDown()) ).toString() );
+		
 //		foul.setText( ( new Boolean(pe.isFoulCommited()) ).toString() );
 		
 	}

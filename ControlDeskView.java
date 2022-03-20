@@ -23,7 +23,7 @@ import java.util.*;
 
 public class ControlDeskView implements ActionListener, ControlDeskObserver {
 
-	private JButton addParty, finished, assign;
+	private JButton addParty, finished, assign, showScore;
 	private JFrame win;
 	private JList partyList;
 	
@@ -52,7 +52,7 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 
 		// Controls Panel
 		JPanel controlsPanel = new JPanel();
-		controlsPanel.setLayout(new GridLayout(3, 1));
+		controlsPanel.setLayout(new GridLayout(4, 1));
 		controlsPanel.setBorder(new TitledBorder("Controls"));
 
 		addParty = new JButton("Add Party");
@@ -61,6 +61,13 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 		addParty.addActionListener(this);
 		addPartyPanel.add(addParty);
 		controlsPanel.add(addPartyPanel);
+		
+		showScore = new JButton("Show Scores");
+		JPanel showScorePanel = new JPanel();
+		showScorePanel.setLayout(new FlowLayout());
+		showScore.addActionListener(this);
+		showScorePanel.add(showScore);
+		controlsPanel.add(showScorePanel);
 
 		assign = new JButton("Assign Lanes");
 		JPanel assignPanel = new JPanel();
@@ -93,6 +100,14 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 			lanePanel.setBorder(new TitledBorder("Lane" + ++laneCount ));
 			laneStatusPanel.add(lanePanel);
 		}
+		
+		//---- Show emoticon in the control panel screen
+		Icon imgIcon = new ImageIcon(this.getClass().getResource("images/logo.gif"));
+		JLabel picLabel = new JLabel(imgIcon);
+		JPanel emojiPanel = new JPanel();
+		emojiPanel.setLayout(new FlowLayout());
+		emojiPanel.add(picLabel);
+		controlsPanel.add(emojiPanel);
 
 		// Party Queue Panel
 		JPanel partyPanel = new JPanel();
@@ -146,6 +161,9 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(addParty)) {
 			AddPartyView addPartyWin = new AddPartyView(this, maxMembers);
+		}
+		if (e.getSource().equals(showScore)) {
+			ShowScores showScoreWin = new ShowScores();
 		}
 		if (e.getSource().equals(assign)) {
 			controlDesk.assignLane();
