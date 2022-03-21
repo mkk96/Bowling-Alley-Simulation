@@ -179,7 +179,30 @@ public class LaneView implements LaneObserver, ActionListener {
 				maintenance.addActionListener(this);
 				maintenancePanel.add(maintenance);
 				buttonPanel.add(maintenancePanel);
-
+				
+				maintenance = new JButton("Pause Game");
+				JPanel ma = new JPanel();
+				ma.setLayout(new FlowLayout());
+				maintenance.addActionListener(this);
+				ma.add(maintenance);
+				buttonPanel.add(ma);
+				
+				maintenance = new JButton("Resume Game");
+				JPanel aq = new JPanel();
+				aq.setLayout(new FlowLayout());
+				maintenance.addActionListener(this);
+				aq.add(maintenance);
+				buttonPanel.add(aq);
+				
+				maintenance = new JButton("Save Game");
+				JPanel qa = new JPanel();
+				qa.setLayout(new FlowLayout());
+				maintenance.addActionListener(this);
+				qa.add(maintenance);
+				buttonPanel.add(qa);
+				
+				
+				
 				cpanel.add(buttonPanel, "South");
 				
 				//Adding throw button
