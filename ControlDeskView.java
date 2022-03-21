@@ -23,13 +23,7 @@ import java.util.*;
 
 public class ControlDeskView implements ActionListener, ControlDeskObserver {
 
-	public static final int controlsPanelRows = 3;
-	public static final int controlsPanelColumns = 1;
-	public static final int laneStatusPanelColumns = 1;
-	public static final int partyListFixedCellWidth = 120;
-	public static final int partyListVisibleRowCount = 10;
-
-	private JButton addParty, finished, assign;
+	private JButton addParty, finished, assign, showScore;
 	private JFrame win;
 	private JList partyList;
 	
@@ -58,7 +52,7 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 
 		// Controls Panel
 		JPanel controlsPanel = new JPanel();
-		controlsPanel.setLayout(new GridLayout(controlsPanelRows, controlsPanelColumns));
+		controlsPanel.setLayout(new GridLayout(4, 1));
 		controlsPanel.setBorder(new TitledBorder("Controls"));
 
 		addParty = new JButton("Add Party");
@@ -67,6 +61,13 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 		addParty.addActionListener(this);
 		addPartyPanel.add(addParty);
 		controlsPanel.add(addPartyPanel);
+		
+		showScore = new JButton("Show Scores");
+		JPanel showScorePanel = new JPanel();
+		showScorePanel.setLayout(new FlowLayout());
+		showScore.addActionListener(this);
+		showScorePanel.add(showScore);
+		controlsPanel.add(showScorePanel);
 
 		assign = new JButton("Assign Lanes");
 		JPanel assignPanel = new JPanel();
@@ -84,7 +85,7 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 
 		// Lane Status Panel
 		JPanel laneStatusPanel = new JPanel();
-		laneStatusPanel.setLayout(new GridLayout(numLanes, laneStatusPanelColumns));
+		laneStatusPanel.setLayout(new GridLayout(numLanes, 1));
 		laneStatusPanel.setBorder(new TitledBorder("Lane Status"));
 
 		HashSet lanes=controlDesk.getLanes();
@@ -99,6 +100,14 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 			lanePanel.setBorder(new TitledBorder("Lane" + ++laneCount ));
 			laneStatusPanel.add(lanePanel);
 		}
+		
+		//---- Show emoticon in the control panel screen
+		Icon imgIcon = new ImageIcon(this.getClass().getResource("images/logo.gif"));
+		JLabel picLabel = new JLabel(imgIcon);
+		JPanel emojiPanel = new JPanel();
+		emojiPanel.setLayout(new FlowLayout());
+		emojiPanel.add(picLabel);
+		controlsPanel.add(emojiPanel);
 
 		// Party Queue Panel
 		JPanel partyPanel = new JPanel();
@@ -109,8 +118,8 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 		empty.add("(Empty)");
 
 		partyList = new JList(empty);
-		partyList.setFixedCellWidth(partyListFixedCellWidth);
-		partyList.setVisibleRowCount(partyListVisibleRowCount);
+		partyList.setFixedCellWidth(120);
+		partyList.setVisibleRowCount(10);
 		JScrollPane partyPane = new JScrollPane(partyList);
 		partyPane.setVerticalScrollBarPolicy(
 			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -152,6 +161,9 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(addParty)) {
 			AddPartyView addPartyWin = new AddPartyView(this, maxMembers);
+		}
+		if (e.getSource().equals(showScore)) {
+			ShowScores showScoreWin = new ShowScores();
 		}
 		if (e.getSource().equals(assign)) {
 			controlDesk.assignLane();

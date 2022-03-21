@@ -118,6 +118,7 @@ public class Pinsetter {
 		rnd = new Random();
 		subscribers = new Vector();
 		foul = false;
+		//throwNumber=0;
 		reset();
 	}
 
@@ -135,14 +136,18 @@ public class Pinsetter {
 		for (int i=0; i <= 9; i++) {
 			if (pins[i]) {
 				double pinluck = rnd.nextDouble();
-				if (pinluck <= .04){ 
+				if (pinluck <= .005){ 
 					foul = true;
+					break;
 				}
-				if ( ((skill + pinluck)/2.0 * 1.2) > .5 ){
-					pins[i] = false;
-				} 
-				if (!pins[i]) {		// this pin just knocked down
-					count++;
+				else
+				{
+					if ( ((skill + pinluck)/2.0 * 1.2) > .5 ){
+						pins[i] = false;
+					} 
+					if (!pins[i]) {		// this pin just knocked down
+						count++;
+					}
 				}
 			}
 		}
@@ -169,7 +174,7 @@ public class Pinsetter {
 		resetPins();
 		
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(500);
 		} catch (Exception e) {}
 		
 		sendEvent(-1);

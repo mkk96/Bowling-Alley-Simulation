@@ -17,18 +17,6 @@ import java.text.*;
 
 public class EndGameReport implements ActionListener, ListSelectionListener {
 
-	public static final int colPanelRows = 1;
-	public static final int colPanelCols = 2;
-	public static final int memberListFixedCellWidth = 120;
-	public static final int memberListVisibleRowCount = 5;
-	public static final int buttonPanelRows = 2;
-	public static final int buttonPanelColumns = 1;
-	public static final int buttonMarginBottom = 4;
-	public static final int buttonMarginLeft = 4;
-	public static final int buttonMarginRight = 4;
-	public static final int buttonMarginTop = 4;
-	public static final int threadSleepTime = 10;
-
 	private JFrame win;
 	private JButton printButton, finished;
 	private JList memberList;
@@ -48,7 +36,7 @@ public class EndGameReport implements ActionListener, ListSelectionListener {
 		((JPanel) win.getContentPane()).setOpaque(false);
 
 		JPanel colPanel = new JPanel();
-		colPanel.setLayout(new GridLayout(colPanelRows, colPanelCols));
+		colPanel.setLayout(new GridLayout( 1, 2 ));
 
 		// Member Panel
 		JPanel partyPanel = new JPanel();
@@ -61,8 +49,8 @@ public class EndGameReport implements ActionListener, ListSelectionListener {
 			myVector.add( ((Bowler)iter.next()).getNick() );
 		}	
 		memberList = new JList(myVector);
-		memberList.setFixedCellWidth(memberListFixedCellWidth);
-		memberList.setVisibleRowCount(memberListVisibleRowCount);
+		memberList.setFixedCellWidth(120);
+		memberList.setVisibleRowCount(5);
 		memberList.addListSelectionListener(this);
 		JScrollPane partyPane = new JScrollPane(memberList);
 		//        partyPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -73,9 +61,9 @@ public class EndGameReport implements ActionListener, ListSelectionListener {
 		// Button Panel
 		// Button Panel
 		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout(new GridLayout(buttonPanelRows, buttonPanelColumns));
+		buttonPanel.setLayout(new GridLayout(2, 1));
 
-		Insets buttonMargin = new Insets(buttonMarginBottom, buttonMarginLeft, buttonMarginRight, buttonMarginTop);
+		Insets buttonMargin = new Insets(4, 4, 4, 4);
 
 		printButton = new JButton("Print Report");
 		JPanel printButtonPanel = new JPanel();
@@ -129,7 +117,7 @@ public class EndGameReport implements ActionListener, ListSelectionListener {
 	public Vector getResult() {
 		while ( result == 0 ) {
 			try {
-				Thread.sleep(threadSleepTime);
+				Thread.sleep(10);
 			} catch ( InterruptedException e ) {
 				System.err.println( "Interrupted" );
 			}
@@ -141,7 +129,7 @@ public class EndGameReport implements ActionListener, ListSelectionListener {
 		win.hide();
 	}
 
-	public static void main( String args[] ) {
+	/*public static void main( String args[] ) {
 		Vector bowlers = new Vector();
 		for ( int i=0; i<4; i++ ) {
 			bowlers.add( new Bowler( "aaaaa", "aaaaa", "aaaaa" ) );
@@ -149,7 +137,7 @@ public class EndGameReport implements ActionListener, ListSelectionListener {
 		Party party = new Party( bowlers );
 		String partyName="wank";
 		EndGameReport e = new EndGameReport( partyName, party );
-	}
+	}*/
 	
 }
 

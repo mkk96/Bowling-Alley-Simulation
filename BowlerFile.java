@@ -35,6 +35,22 @@ class BowlerFile {
      * 
      */
 	
+	public static Bowler registerPatron(String nickName) {
+		Bowler patron = null;
+
+		try {
+			// only one patron / nick.... no dupes, no checks
+
+			patron = BowlerFile.getBowlerInfo(nickName);
+
+		} catch (Exception e) {
+			System.err.println("Error..." + e);
+		}
+
+		return patron;
+	}
+	
+	
 	public static Bowler getBowlerInfo(String nickName)
 		throws SQLException {
 		

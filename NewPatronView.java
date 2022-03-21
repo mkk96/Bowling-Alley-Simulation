@@ -27,13 +27,6 @@ import java.text.*;
 
 public class NewPatronView implements ActionListener {
 
-	public static final int patronPanelRows = 3;
-	public static final int patronPanelColumns = 1;
-	public static final int nickFieldColumns = 15;
-	public static final int fullFieldColumns = 15;
-	public static final int emailFieldColumns = 15;
-	public static final int buttonPanelRows = 4;
-	public static final int buttonPanelColumns = 1;
 	private int maxSize;
 
 	private JFrame win;
@@ -61,27 +54,27 @@ public class NewPatronView implements ActionListener {
 
 		// Patron Panel
 		JPanel patronPanel = new JPanel();
-		patronPanel.setLayout(new GridLayout(patronPanelRows, patronPanelColumns));
+		patronPanel.setLayout(new GridLayout(3, 1));
 		patronPanel.setBorder(new TitledBorder("Your Info"));
 
 		JPanel nickPanel = new JPanel();
 		nickPanel.setLayout(new FlowLayout());
 		nickLabel = new JLabel("Nick Name");
-		nickField = new JTextField("", nickFieldColumns);
+		nickField = new JTextField("", 15);
 		nickPanel.add(nickLabel);
 		nickPanel.add(nickField);
 
 		JPanel fullPanel = new JPanel();
 		fullPanel.setLayout(new FlowLayout());
 		fullLabel = new JLabel("Full Name");
-		fullField = new JTextField("", fullFieldColumns);
+		fullField = new JTextField("", 15);
 		fullPanel.add(fullLabel);
 		fullPanel.add(fullField);
 
 		JPanel emailPanel = new JPanel();
 		emailPanel.setLayout(new FlowLayout());
 		emailLabel = new JLabel("E-Mail");
-		emailField = new JTextField("", emailFieldColumns);
+		emailField = new JTextField("", 15);
 		emailPanel.add(emailLabel);
 		emailPanel.add(emailField);
 
@@ -91,7 +84,9 @@ public class NewPatronView implements ActionListener {
 
 		// Button Panel
 		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout(new GridLayout(buttonPanelRows, buttonPanelColumns));
+		buttonPanel.setLayout(new GridLayout(4, 1));
+
+		Insets buttonMargin = new Insets(4, 4, 4, 4);
 
 		finished = new JButton("Add Patron");
 		JPanel finishedPanel = new JPanel();
