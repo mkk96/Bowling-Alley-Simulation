@@ -21,7 +21,7 @@ public class ScoreHistoryFile {
 		PreparedStatement statement =connection.prepareStatement("insert into score_history values (?,?,?)");
 		statement.setString(1, nick);
 		statement.setString(2, date);
-		statement.setString(3, score);
+		statement.setInt(3, Integer.parseInt(score));
 		
 		statement.executeUpdate();
 		
@@ -41,7 +41,7 @@ public class ScoreHistoryFile {
 		Vector scores = new Vector();
 		
 		while(resultSet.next()) {
-			scores.add(new Score(resultSet.getString(1),resultSet.getString(2),resultSet.getString(3)));
+			scores.add(new Score(resultSet.getString(1),resultSet.getString(2),Integer.toString(resultSet.getInt(3))));
 		}
 		
 		System.out.println("retrieval successfull don't worry");
