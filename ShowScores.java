@@ -25,7 +25,7 @@ public class ShowScores implements ActionListener, ListSelectionListener {
 
     private final JFrame win;
 
-    private final JButton finished,maxPlayerScore,minPlayerScore,minScore,maxScore;
+    private final JButton finished,maxPlayerScore,minPlayerScore,minScore,maxScore,playerWithHighestScore,playerWithLowestScore;
 
     private final JList<Vector> outputList;
     private final JList<Vector> allBowlers;
@@ -63,19 +63,33 @@ public class ShowScores implements ActionListener, ListSelectionListener {
         minScorePanel.add(minScore);
         controlsPanel.add(minScorePanel);
 
-        maxPlayerScore = new JButton("Player Highest Score");
+        maxPlayerScore = new JButton("Highest Score of seleted player");
         JPanel maxPlayerScorePanel = new JPanel();
         maxPlayerScorePanel.setLayout(new FlowLayout());
         maxPlayerScore.addActionListener(this);
         maxPlayerScorePanel.add(maxPlayerScore);
         controlsPanel.add(maxPlayerScorePanel);
 
-        minPlayerScore = new JButton("Player Lowest Score");
+        minPlayerScore = new JButton("Lowest Score of selected player");
         JPanel minPlayerScorePanel = new JPanel();
         minPlayerScorePanel.setLayout(new FlowLayout());
         minPlayerScore.addActionListener(this);
         minPlayerScorePanel.add(minPlayerScore);
         controlsPanel.add(minPlayerScorePanel);
+        
+        playerWithHighestScore = new JButton("Player having Highest Score");
+        JPanel playerWithHighestScorePanel = new JPanel();
+        playerWithHighestScorePanel.setLayout(new FlowLayout());
+        playerWithHighestScore.addActionListener(this);
+        playerWithHighestScorePanel.add(playerWithHighestScore);
+        controlsPanel.add(playerWithHighestScorePanel);
+        
+        playerWithLowestScore = new JButton("Player having Lowest Score");
+        JPanel playerWithLowestScorePanel = new JPanel();
+        playerWithLowestScorePanel.setLayout(new FlowLayout());
+        playerWithLowestScore.addActionListener(this);
+        playerWithLowestScorePanel.add(playerWithLowestScore);
+        controlsPanel.add(playerWithLowestScorePanel);
 
         finished = new JButton("Close");
         JPanel finishedPanel = new JPanel();
@@ -226,6 +240,48 @@ public class ShowScores implements ActionListener, ListSelectionListener {
             	System.out.println(exp);
             }
         }
+        
+        if (e.getSource().equals(playerWithHighestScore)) {
+            System.out.println("in playerWithHighestScore");
+            party.clear();
+            try {
+                
+	            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/unit2",
+	    				"root", "mYSQLSERVER");
+	    		
+	    		PreparedStatement statement =connection.prepareStatement("select nick from score_history where score = (select max(score) from score_history)");
+	    		ResultSet resultSet = statement.executeQuery();
+	    		if(resultSet.next()) {
+	    			party.add(resultSet.getString(1));
+	                outputList.setListData(party);
+	    		}
+            }
+            catch(SQLException exp) {
+            	System.out.println(exp);
+            }
+        }
+        
+        if (e.getSource().equals(playerWithLowestScore)) {
+            System.out.println("in playerWithLowestScore");
+            party.clear();
+            try {
+                
+	            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/unit2",
+	    				"root", "mYSQLSERVER");
+	    		
+	    		PreparedStatement statement =connection.prepareStatement("select nick from score_history where score = (select min(score) from score_history)");
+	    		ResultSet resultSet = statement.executeQuery();
+	    		if(resultSet.next()) {
+	    			party.add(resultSet.getString(1));
+	                outputList.setListData(party);
+	    		}
+            }
+            catch(SQLException exp) {
+            	System.out.println(exp);
+            }
+        }
+        
+        
         if (e.getSource().equals(finished)) {
             win.hide();
         }
