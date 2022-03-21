@@ -39,12 +39,10 @@ class BowlerFile {
      */
 	
 	public static Bowler getBowlerInfo(String nickName)
-		throws java.sql.SQLException {
+		throws SQLException {
 		
 		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/unit2",
 				"root", "mYSQLSERVER");
-
-		System.out.println("hi");
 		
 		PreparedStatement statement =connection.prepareStatement("SELECT * from bowlers WHERE nick = ?");
 		statement.setString(1, nickName);
@@ -53,14 +51,22 @@ class BowlerFile {
 		if(resultSet.next()) {
 			System.out.println(
 					"Nick: "
-						+ resultSet.getString(2)
-						+ " Full: "
-						+ resultSet.getString(3)
-						+ " email: "
 						+ resultSet.getString(1)
+						+ " Full: "
+						+ resultSet.getString(2)
+						+ " email: "
+						+ resultSet.getString(3)
 					);
-				return (new Bowler(resultSet.getString(2), resultSet.getString(1), resultSet.getString(3)));
+			
+			System.out.println("here don't worry");
+	
+			
+			statement.close();
+			connection.close();
+			
+			return (new Bowler(resultSet.getString(1), resultSet.getString(2), resultSet.getString(3)));
 		}
+		
 		System.out.println("Nick not found...");
 		return null;
 	}
@@ -95,19 +101,27 @@ class BowlerFile {
      * 
      */
 
-	public static Vector getBowlers()
-		throws IOException, FileNotFoundException {
-
-		Vector allBowlers = new Vector();
-
-		BufferedReader in = new BufferedReader(new FileReader(BOWLER_DAT));
-		String data;
-		while ((data = in.readLine()) != null) {
-			// File format is nick\tfname\te-mail
-			String[] bowler = data.split("\t");
-			//"Nick: bowler[0] Full: bowler[1] email: bowler[2]
-			allBowlers.add(bowler[0]);
+	public static Vector<String> getBowlers()
+		throws SQLException {
+		
+		Vector<String> allBowlers = new Vector<String>();
+		
+		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/unit2",
+				"root", "mYSQLSERVER");
+		
+		PreparedStatement statement =connection.prepareStatement("SELECT nick from bowlers");
+		ResultSet resultSet = statement.executeQuery();
+		
+		while(resultSet.next()) {
+			allBowlers.add(resultSet.getString(1));
 		}
+		
+		System.out.println("here too don't worry");
+		
+		resultSet.close();
+		statement.close();
+		connection.close();
+		
 		return allBowlers;
 	}
 
