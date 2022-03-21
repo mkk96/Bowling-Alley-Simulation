@@ -8,37 +8,44 @@
 
 import java.util.*;
 import java.io.*;
+import java.sql.*;
 
 public class ScoreHistoryFile {
-
-	private static String SCOREHISTORY_DAT = "D:\\IIIT Hyd\\2nd Sem\\SE\\BowlingAlley_new\\Bowling-Alley-Simulation\\SCOREHISTORY.DAT";
-
+	
 	public static void addScore(String nick, String date, String score)
-		throws IOException, FileNotFoundException {
-
-		String data = nick + "\t" + date + "\t" + score + "\n";
-
-		RandomAccessFile out = new RandomAccessFile(SCOREHISTORY_DAT, "rw");
-		out.skipBytes((int) out.length());
-		out.writeBytes(data);
-		out.close();
+		throws SQLException {
+		
+		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/unit2",
+				"root", "mYSQLSERVER");
+		
+		PreparedStatement statement =connection.prepareStatement("insert into score_history values (?,?,?)");
+		statement.setString(1, nick);
+		statement.setString(2, date);
+		statement.setString(3, score);
+		
+		statement.executeUpdate();
+		
+		System.out.println("Add successfull don't worry");
 	}
 
 	public static Vector getScores(String nick)
-		throws IOException, FileNotFoundException {
+		throws SQLException {
+		
+		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/unit2",
+				"root", "mYSQLSERVER");
+		
+		PreparedStatement statement =connection.prepareStatement("SELECT * from score_history WHERE nick = ?");
+		statement.setString(1, nick);
+		ResultSet resultSet = statement.executeQuery();
+		
 		Vector scores = new Vector();
-
-		BufferedReader in =
-			new BufferedReader(new FileReader(SCOREHISTORY_DAT));
-		String data;
-		while ((data = in.readLine()) != null) {
-			// File format is nick\tfname\te-mail
-			String[] scoredata = data.split("\t");
-			//"Nick: scoredata[0] Date: scoredata[1] Score: scoredata[2]
-			if (nick.equals(scoredata[0])) {
-				scores.add(new Score(scoredata[0], scoredata[1], scoredata[2]));
-			}
+		
+		while(resultSet.next()) {
+			scores.add(new Score(resultSet.getString(1),resultSet.getString(2),resultSet.getString(3)));
 		}
+		
+		System.out.println("retrieval successfull don't worry");
+		
 		return scores;
 	}
 
