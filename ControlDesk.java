@@ -113,9 +113,7 @@ class ControlDesk extends Thread {
 
 			patron = BowlerFile.getBowlerInfo(nickName);
 
-		} catch (FileNotFoundException e) {
-			System.err.println("Error..." + e);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			System.err.println("Error..." + e);
 		}
 

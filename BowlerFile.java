@@ -21,11 +21,13 @@
 
 import java.util.*;
 import java.io.*;
+import java.sql.*;
 
 class BowlerFile {
 
-	/** The location of the bowelr database */
-	private static String BOWLER_DAT = "\\BOWLERS.DAT";
+	/** The location of the bowler database */
+
+	private static String BOWLER_DAT = "./BOWLERS.DAT";
 
     /**
      * Retrieves bowler information from the database and returns a Bowler objects with populated fields.
@@ -35,24 +37,29 @@ class BowlerFile {
      * @return a Bowler object
      * 
      */
+	
 	public static Bowler getBowlerInfo(String nickName)
-		throws IOException, FileNotFoundException {
+		throws java.sql.SQLException {
+		
+		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/unit2",
+				"root", "mYSQLSERVER");
 
-		BufferedReader in = new BufferedReader(new FileReader(BOWLER_DAT));
-		String data;
-		while ((data = in.readLine()) != null) {
-			// File format is nick\tfname\te-mail
-			String[] bowler = data.split("\t");
-			if (nickName.equals(bowler[0])) {
-				System.out.println(
+		System.out.println("hi");
+		
+		PreparedStatement statement =connection.prepareStatement("SELECT * from bowlers WHERE nick = ?");
+		statement.setString(1, nickName);
+		ResultSet resultSet = statement.executeQuery();
+		
+		if(resultSet.next()) {
+			System.out.println(
 					"Nick: "
-						+ bowler[0]
+						+ resultSet.getString(2)
 						+ " Full: "
-						+ bowler[1]
+						+ resultSet.getString(3)
 						+ " email: "
-						+ bowler[2]);
-				return (new Bowler(bowler[0], bowler[1], bowler[2]));
-			}
+						+ resultSet.getString(1)
+					);
+				return (new Bowler(resultSet.getString(2), resultSet.getString(1), resultSet.getString(3)));
 		}
 		System.out.println("Nick not found...");
 		return null;

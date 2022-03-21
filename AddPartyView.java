@@ -242,7 +242,7 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 				System.err.println( "A Bowler with that name already exists." );
 			}
 		} catch (Exception e2) {
-			System.err.println("File I/O Error");
+			System.err.println("Database error");
 		}
 	}
 
