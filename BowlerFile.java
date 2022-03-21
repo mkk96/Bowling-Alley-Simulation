@@ -26,9 +26,6 @@ import java.sql.*;
 class BowlerFile {
 
 	/** The location of the bowler database */
-
-	private static String BOWLER_DAT = "./BOWLERS.DAT";
-
     /**
      * Retrieves bowler information from the database and returns a Bowler objects with populated fields.
      *
@@ -48,23 +45,22 @@ class BowlerFile {
 		statement.setString(1, nickName);
 		ResultSet resultSet = statement.executeQuery();
 		
+		String nick,full,email;
+		
 		if(resultSet.next()) {
+			nick = resultSet.getString(1);
+			full = resultSet.getString(2);
+			email = resultSet.getString(3);
 			System.out.println(
 					"Nick: "
-						+ resultSet.getString(1)
+						+ nick
 						+ " Full: "
-						+ resultSet.getString(2)
+						+ full
 						+ " email: "
-						+ resultSet.getString(3)
+						+ email
 					);
 			
-			System.out.println("here don't worry");
-	
-			
-			statement.close();
-			connection.close();
-			
-			return (new Bowler(resultSet.getString(1), resultSet.getString(2), resultSet.getString(3)));
+			return (new Bowler(nick,full,email));
 		}
 		
 		System.out.println("Nick not found...");
@@ -84,14 +80,17 @@ class BowlerFile {
 		String nickName,
 		String fullName,
 		String email)
-		throws IOException, FileNotFoundException {
-
-		String data = nickName + "\t" + fullName + "\t" + email + "\n";
-
-		RandomAccessFile out = new RandomAccessFile(BOWLER_DAT, "rw");
-		out.skipBytes((int) out.length());
-		out.writeBytes(data);
-		out.close();
+		throws SQLException {
+		
+		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/unit2",
+				"root", "mYSQLSERVER");
+		
+		PreparedStatement statement =connection.prepareStatement("insert into bowlers values (?,?,?)");
+		statement.setString(1, nickName);
+		statement.setString(2, fullName);
+		statement.setString(3, email);
+		
+		statement.executeUpdate();
 	}
 
     /**
@@ -115,13 +114,6 @@ class BowlerFile {
 		while(resultSet.next()) {
 			allBowlers.add(resultSet.getString(1));
 		}
-		
-		System.out.println("here too don't worry");
-		
-		resultSet.close();
-		statement.close();
-		connection.close();
-		
 		return allBowlers;
 	}
 
