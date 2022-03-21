@@ -24,7 +24,7 @@ public class ShowScores implements ActionListener, ListSelectionListener {
 
     private final JFrame win;
 
-    private final JButton finished,lastScores,maxPlayerScore,minPlayerScore,minScore,maxScore,TopScorer,LowestScorer;
+    private final JButton finished,maxPlayerScore,minPlayerScore,minScore,maxScore;
 
     private final JList<Vector> outputList;
     private final JList<Vector> allBowlers;
@@ -164,28 +164,12 @@ public class ShowScores implements ActionListener, ListSelectionListener {
         maxScorePanel.add(maxScore);
         controlsPanel.add(maxScorePanel);
         
-        TopScorer = new JButton("Top Scorer");
-        JPanel TopScorerPanel = new JPanel();
-        TopScorerPanel.setLayout(new FlowLayout());
-        TopScorer.addActionListener(this);
-        TopScorerPanel.add(TopScorer);
-        controlsPanel.add(TopScorerPanel);
-        
         minScore = new JButton("Lowest Score");
         JPanel minScorePanel = new JPanel();
         minScorePanel.setLayout(new FlowLayout());
         minScore.addActionListener(this);
         minScorePanel.add(minScore);
         controlsPanel.add(minScorePanel);
-        
-
-        LowestScorer = new JButton("Lowest Scorer");
-        JPanel LowestScorePanel = new JPanel();
-        LowestScorePanel.setLayout(new FlowLayout());
-        LowestScorer.addActionListener(this);
-        LowestScorePanel.add(LowestScorer);
-        controlsPanel.add(LowestScorePanel);
-        
 
         maxPlayerScore = new JButton("Player Highest Score");
         JPanel maxPlayerScorePanel = new JPanel();
@@ -200,13 +184,6 @@ public class ShowScores implements ActionListener, ListSelectionListener {
         minPlayerScore.addActionListener(this);
         minPlayerScorePanel.add(minPlayerScore);
         controlsPanel.add(minPlayerScorePanel);
-
-        lastScores = new JButton("Last Scores by player");
-        JPanel lastScoresPanel = new JPanel();
-        lastScoresPanel.setLayout(new FlowLayout());
-        lastScores.addActionListener(this);
-        lastScoresPanel.add(lastScores);
-        controlsPanel.add(lastScoresPanel);
 
         finished = new JButton("Close");
         JPanel finishedPanel = new JPanel();
@@ -316,57 +293,6 @@ public class ShowScores implements ActionListener, ListSelectionListener {
             }
             party.add(Integer.toString(max));
             outputList.setListData(party);
-        }
-        if (e.getSource().equals(TopScorer)) {
-            System.out.println("in TopScorer");
-            party.clear();
-            int pm,max = Integer.parseInt(getScores("maxperson",(bowlerdb.get(0)).toString()).get(0));
-            String tname,TPName = getScorer((bowlerdb.get(0)).toString()).get(0);
-            for (int index=1;index < bowlerdb.size();index++)
-            {
-                pm = Integer.parseInt(getScores("maxperson",(bowlerdb.get(index)).toString()).get(0));
-                tname = getScorer((bowlerdb.get(index)).toString()).get(0);
-                if (pm > max) {
-                	max = pm;
-                	TPName = tname;
-                }
-            }
-            //party.add(Integer.toString(max));
-            party.add(TPName);
-            outputList.setListData(party);
-        }
-        
-        if (e.getSource().equals(LowestScorer)) {
-            System.out.println("in LowestScorer");
-            party.clear();
-            int pm,min = Integer.parseInt(getScores("minperson",(bowlerdb.get(0)).toString()).get(0));
-            String tname,LPName = getScorer((bowlerdb.get(0)).toString()).get(0);
-            for (int index=1;index < bowlerdb.size();index++)
-            {
-                pm = Integer.parseInt(getScores("minperson",(bowlerdb.get(index)).toString()).get(0));
-                tname = getScorer((bowlerdb.get(index)).toString()).get(0);
-                if (pm < min) {
-                	min = pm;
-                	LPName = tname;
-                }
-            }
-            party.add(LPName);
-            outputList.setListData(party);
-        }
-        
-
-        if (e.getSource().equals(lastScores)) {
-            System.out.println("in lastScores");
-            if (selectedNick != null) {
-                party.clear();
-                Vector<String> ls = getScores("lastscores",selectedNick);
-                for (int index=0;index < ls.size();index++) {
-                    System.out.println(ls.get(index));
-                    party.add(ls.get(index));
-                }
-                outputList.setListData(party);
-            }
-           
         }
         if (e.getSource().equals(finished)) {
             win.hide();
