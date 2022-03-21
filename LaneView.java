@@ -187,7 +187,7 @@ public class LaneView implements LaneObserver, ActionListener {
 				new_buttonPanel.setLayout(new FlowLayout());
 
 				Insets new_buttonMargin = new Insets(4, 4, 4, 4);
-                throw_the_ball = new JButton("Throw Ball"+theBowler.getNick());
+                throw_the_ball = new JButton("Throw Ball "+theBowler.getNick());
 				JPanel throwPanel = new JPanel();
 				throwPanel.setLayout(new FlowLayout());
 				throw_the_ball.addActionListener(this);
