@@ -21,22 +21,20 @@
 
 import java.util.*;
 import java.io.*;
+import java.sql.*;
 
 class BowlerFile {
 
-	/** The location of the bowelr database */
-	private static String BOWLER_DAT = "C:\\Users\\mukul\\eclipse-workspace\\unit 2\\src\\BOWLERS.DAT";
-
-    
+	/** The location of the bowler database */
     /**
-     * Retrieves a matching Bowler from the bowler database.
+     * Retrieves bowler information from the database and returns a Bowler objects with populated fields.
      *
-     * @param nickName	The NickName of the Bowler
+     * @param nickName	the nickName of the bolwer to retrieve
      *
-     * @return a Bowler object.
-     *
+     * @return a Bowler object
+     * 
      */
-
+	
 	public static Bowler registerPatron(String nickName) {
 		Bowler patron = null;
 
@@ -45,9 +43,7 @@ class BowlerFile {
 
 			patron = BowlerFile.getBowlerInfo(nickName);
 
-		} catch (FileNotFoundException e) {
-			System.err.println("Error..." + e);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			System.err.println("Error..." + e);
 		}
 
@@ -55,35 +51,34 @@ class BowlerFile {
 	}
 	
 	
-	
-	/**
-     * Retrieves bowler information from the database and returns a Bowler objects with populated fields.
-     *
-     * @param nickName	the nickName of the bolwer to retrieve
-     *
-     * @return a Bowler object
-     * 
-     */
-
 	public static Bowler getBowlerInfo(String nickName)
-		throws IOException, FileNotFoundException {
-
-		BufferedReader in = new BufferedReader(new FileReader(BOWLER_DAT));
-		String data;
-		while ((data = in.readLine()) != null) {
-			// File format is nick\tfname\te-mail
-			String[] bowler = data.split("\t");
-			if (nickName.equals(bowler[0])) {
-				System.out.println(
+		throws SQLException {
+		
+		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/unit2",
+				"root", "mYSQLSERVER");
+		
+		PreparedStatement statement =connection.prepareStatement("SELECT * from bowlers WHERE nick = ?");
+		statement.setString(1, nickName);
+		ResultSet resultSet = statement.executeQuery();
+		
+		String nick,full,email;
+		
+		if(resultSet.next()) {
+			nick = resultSet.getString(1);
+			full = resultSet.getString(2);
+			email = resultSet.getString(3);
+			System.out.println(
 					"Nick: "
-						+ bowler[0]
+						+ nick
 						+ " Full: "
-						+ bowler[1]
+						+ full
 						+ " email: "
-						+ bowler[2]);
-				return (new Bowler(bowler[0], bowler[1], bowler[2]));
-			}
+						+ email
+					);
+			
+			return (new Bowler(nick,full,email));
 		}
+		
 		System.out.println("Nick not found...");
 		return null;
 	}
@@ -101,14 +96,17 @@ class BowlerFile {
 		String nickName,
 		String fullName,
 		String email)
-		throws IOException, FileNotFoundException {
-
-		String data = nickName + "\t" + fullName + "\t" + email + "\n";
-
-		RandomAccessFile out = new RandomAccessFile(BOWLER_DAT, "rw");
-		out.skipBytes((int) out.length());
-		out.writeBytes(data);
-		out.close();
+		throws SQLException {
+		
+		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/unit2",
+				"root", "mYSQLSERVER");
+		
+		PreparedStatement statement =connection.prepareStatement("insert into bowlers values (?,?,?)");
+		statement.setString(1, nickName);
+		statement.setString(2, fullName);
+		statement.setString(3, email);
+		
+		statement.executeUpdate();
 	}
 
     /**
@@ -118,18 +116,19 @@ class BowlerFile {
      * 
      */
 
-	public static Vector getBowlers()
-		throws IOException, FileNotFoundException {
-
-		Vector allBowlers = new Vector();
-
-		BufferedReader in = new BufferedReader(new FileReader(BOWLER_DAT));
-		String data;
-		while ((data = in.readLine()) != null) {
-			// File format is nick\tfname\te-mail
-			String[] bowler = data.split("\t");
-			//"Nick: bowler[0] Full: bowler[1] email: bowler[2]
-			allBowlers.add(bowler[0]);
+	public static Vector<String> getBowlers()
+		throws SQLException {
+		
+		Vector<String> allBowlers = new Vector<String>();
+		
+		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/unit2",
+				"root", "mYSQLSERVER");
+		
+		PreparedStatement statement =connection.prepareStatement("SELECT nick from bowlers");
+		ResultSet resultSet = statement.executeQuery();
+		
+		while(resultSet.next()) {
+			allBowlers.add(resultSet.getString(1));
 		}
 		return allBowlers;
 	}
