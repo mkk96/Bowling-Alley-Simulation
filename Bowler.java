@@ -27,6 +27,8 @@ public class Bowler {
     private String fullName;
     private String nickName;
     private String email;
+    
+    //public boolean blocked;
 
     public Bowler( String nick, String full, String mail ) {
 	nickName = nick;
