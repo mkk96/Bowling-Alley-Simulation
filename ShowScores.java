@@ -8,6 +8,7 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.*;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -24,7 +25,7 @@ public class ShowScores implements ActionListener, ListSelectionListener {
 
     private final JFrame win;
 
-    private final JButton finished,maxPlayerScore,minPlayerScore,minScore,maxScore;
+    private final JButton finished,maxPlayerScore,minPlayerScore,minScore,maxScore,playerWithHighestScore,playerWithLowestScore;
 
     private final JList<Vector> outputList;
     private final JList<Vector> allBowlers;
@@ -33,116 +34,7 @@ public class ShowScores implements ActionListener, ListSelectionListener {
 
     private Vector bowlerdb;
     private final Vector party;
-
     
-    public Vector<String> getScores(String type,String nick){
-
-        if (type.equals("minperson"))
-        {   
-            Vector scores = null;
-            try {
-                scores = ScoreHistoryFile.getScores(nick);
-            } catch (Exception e) {
-                System.err.println("Error: " + e);
-            }
-
-            assert scores != null;
-            // Vector scores = ScoreHistoryFile.getScores(nick);
-            Score scoresitem = (Score)scores.get(0);
-            int min = Integer.parseInt(scoresitem.getScore());
-            for(int index = 0; index < scores.size(); index++)
-            {   
-                scoresitem = (Score)scores.get(index);
-                int s = Integer.parseInt(scoresitem.getScore());
-                if (s<min)
-                    min = s;
-            }
-            Vector<String> result =  new Vector<>();
-            result.add(Integer.toString(min));
-            System.out.println(result.get(0));
-            return result;
-        }
-        if (type.equals("maxperson"))
-        {
-            Vector scores = null;
-            try {
-                scores = ScoreHistoryFile.getScores(nick);
-            } catch (Exception e) {
-                System.err.println("Error: " + e);
-            }
-
-            assert scores != null;
-            // Vector scores = ScoreHistoryFile.getScores(nick);
-            int max = 0;
-            Score scoresitem;
-            for(int index = 0; index < scores.size(); index++)
-            {   
-                scoresitem = (Score)scores.get(index);
-                //newly added
-                System.out.println(scoresitem.getNickName());
-                int s = Integer.parseInt(scoresitem.getScore());
-                if (s>max)
-                    max = s;
-            }
-            Vector<String> result =  new Vector<>();
-            result.add(Integer.toString(max));
-            System.out.println(result.get(0));
-            return result;
-        }
-        
-        Vector scores = null;
-            try {
-                scores = ScoreHistoryFile.getScores(nick);
-            } catch (Exception e) {
-                System.err.println("Error: " + e);
-            }
-            assert scores != null;
-
-            Score scoresitem;
-            Vector<String> result =  new Vector<>();
-
-            int numPastScores = 6;
-            int i = 0;
-            for (int index = (scores.size()-1); (index >= 0) && (i < numPastScores); index--,i++)
-            {   
-                System.out.println("printing index");
-                System.out.println(index);
-                scoresitem = (Score)scores.get(index);
-                result.add(scoresitem.getScore());
-            }
-            return result;
-    }
-    
-    
-    public Vector<String> getScorer(String nick){
-    	Vector scores = null;
-        try {
-            scores = ScoreHistoryFile.getScores(nick);
-        } catch (Exception e) {
-            System.err.println("Error: " + e);
-        }
-
-        assert scores != null;
-        // Vector scores = ScoreHistoryFile.getScores(nick);
-        int max = 0;
-        String tempname,topScorername = null;
-        Score scoresitem;
-        for(int index = 0; index < scores.size(); index++)
-        {   
-            scoresitem = (Score)scores.get(index);
-            tempname = scoresitem.getNickName();
-            int s = Integer.parseInt(scoresitem.getScore());
-            if (s>max)	{
-            	max = s;
-            	topScorername = tempname;
-            }
-        }
-        Vector<String> result =  new Vector<>();
-        result.add(topScorername);
-        System.out.println(result.get(0));
-        return result;
-    }
-
     public ShowScores() {
 
         win = new JFrame("Show Scores");
@@ -171,19 +63,33 @@ public class ShowScores implements ActionListener, ListSelectionListener {
         minScorePanel.add(minScore);
         controlsPanel.add(minScorePanel);
 
-        maxPlayerScore = new JButton("Player Highest Score");
+        maxPlayerScore = new JButton("Highest Score of seleted player");
         JPanel maxPlayerScorePanel = new JPanel();
         maxPlayerScorePanel.setLayout(new FlowLayout());
         maxPlayerScore.addActionListener(this);
         maxPlayerScorePanel.add(maxPlayerScore);
         controlsPanel.add(maxPlayerScorePanel);
 
-        minPlayerScore = new JButton("Player Lowest Score");
+        minPlayerScore = new JButton("Lowest Score of selected player");
         JPanel minPlayerScorePanel = new JPanel();
         minPlayerScorePanel.setLayout(new FlowLayout());
         minPlayerScore.addActionListener(this);
         minPlayerScorePanel.add(minPlayerScore);
         controlsPanel.add(minPlayerScorePanel);
+        
+        playerWithHighestScore = new JButton("Player having Highest Score");
+        JPanel playerWithHighestScorePanel = new JPanel();
+        playerWithHighestScorePanel.setLayout(new FlowLayout());
+        playerWithHighestScore.addActionListener(this);
+        playerWithHighestScorePanel.add(playerWithHighestScore);
+        controlsPanel.add(playerWithHighestScorePanel);
+        
+        playerWithLowestScore = new JButton("Player having Lowest Score");
+        JPanel playerWithLowestScorePanel = new JPanel();
+        playerWithLowestScorePanel.setLayout(new FlowLayout());
+        playerWithLowestScore.addActionListener(this);
+        playerWithLowestScorePanel.add(playerWithLowestScore);
+        controlsPanel.add(playerWithLowestScorePanel);
 
         finished = new JButton("Close");
         JPanel finishedPanel = new JPanel();
@@ -252,48 +158,130 @@ public class ShowScores implements ActionListener, ListSelectionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(minPlayerScore)) {
             System.out.println("in minPlayerScore");
+            party.clear();
             if (selectedNick != null) {
-                party.clear();
-                party.add(getScores("minperson",selectedNick).get(0));
-                outputList.setListData(party);
+            	try {
+                    
+    	            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/unit2",
+    	    				"root", "mYSQLSERVER");
+    	    		
+    	    		PreparedStatement statement =connection.prepareStatement("SELECT min(score) from score_history where nick=?");
+    	    		statement.setString(1, selectedNick);
+    	    		ResultSet resultSet = statement.executeQuery();
+    	    		if(resultSet.next()) {
+    	    			party.add(Integer.toString(resultSet.getInt(1)));
+    	                outputList.setListData(party);
+    	    		}
+                }
+                catch(SQLException exp) {
+                	System.out.println(exp);
+                }
             }
         }
 
         if (e.getSource().equals(maxPlayerScore)) {
             System.out.println("in maxPlayerScore");
+            party.clear();
             if (selectedNick != null) {
-                party.clear();
-                party.add(getScores("maxperson",selectedNick).get(0));
-                outputList.setListData(party);
+            	try {
+                    
+    	            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/unit2",
+    	    				"root", "mYSQLSERVER");
+    	    		
+    	    		PreparedStatement statement =connection.prepareStatement("SELECT max(score) from score_history where nick=?");
+    	    		statement.setString(1, selectedNick);
+    	    		ResultSet resultSet = statement.executeQuery();
+    	    		if(resultSet.next()) {
+    	    			party.add(Integer.toString(resultSet.getInt(1)));
+    	                outputList.setListData(party);
+    	    		}
+                }
+                catch(SQLException exp) {
+                	System.out.println(exp);
+                }
             }
         }
 
         if (e.getSource().equals(minScore)) {
             System.out.println("in minScore");
             party.clear();
-            int pm,min = Integer.parseInt(getScores("minperson",(bowlerdb.get(0)).toString()).get(0));
-            for (int index=1;index < bowlerdb.size();index++)
-            {
-                pm = Integer.parseInt(getScores("minperson",(bowlerdb.get(index)).toString()).get(0));
-                if (pm < min)
-                    min = pm;
+            try {
+            
+	            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/unit2",
+	    				"root", "mYSQLSERVER");
+	    		
+	    		PreparedStatement statement =connection.prepareStatement("SELECT min(score) from score_history");
+	    		ResultSet resultSet = statement.executeQuery();
+	    		if(resultSet.next()) {
+	    			party.add(Integer.toString(resultSet.getInt(1)));
+	                outputList.setListData(party);
+	    		}
             }
-            party.add(Integer.toString(min));
-            outputList.setListData(party);
+            catch(SQLException exp) {
+            	System.out.println(exp);
+            }
         }
         if (e.getSource().equals(maxScore)) {
             System.out.println("in maxScore");
             party.clear();
-            int pm,max = Integer.parseInt(getScores("maxperson",(bowlerdb.get(0)).toString()).get(0));
-            for (int index=1;index < bowlerdb.size();index++)
-            {
-                pm = Integer.parseInt(getScores("maxperson",(bowlerdb.get(index)).toString()).get(0));
-                if (pm > max)
-                    max = pm;
+            try {
+                
+	            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/unit2",
+	    				"root", "mYSQLSERVER");
+	    		
+	    		PreparedStatement statement =connection.prepareStatement("SELECT max(score) from score_history");
+	    		ResultSet resultSet = statement.executeQuery();
+	    		if(resultSet.next()) {
+	    			party.add(Integer.toString(resultSet.getInt(1)));
+	                outputList.setListData(party);
+	    		}
             }
-            party.add(Integer.toString(max));
-            outputList.setListData(party);
+            catch(SQLException exp) {
+            	System.out.println(exp);
+            }
         }
+        
+        if (e.getSource().equals(playerWithHighestScore)) {
+            System.out.println("in playerWithHighestScore");
+            party.clear();
+            try {
+                
+	            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/unit2",
+	    				"root", "mYSQLSERVER");
+	    		
+	    		PreparedStatement statement =connection.prepareStatement("select nick from score_history where score = (select max(score) from score_history)");
+	    		ResultSet resultSet = statement.executeQuery();
+	    		if(resultSet.next()) {
+	    			party.add(resultSet.getString(1));
+	                outputList.setListData(party);
+	    		}
+            }
+            catch(SQLException exp) {
+            	System.out.println(exp);
+            }
+        }
+        
+        if (e.getSource().equals(playerWithLowestScore)) {
+            System.out.println("in playerWithLowestScore");
+            party.clear();
+            try {
+                
+	            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/unit2",
+	    				"root", "mYSQLSERVER");
+	    		
+	    		PreparedStatement statement =connection.prepareStatement("select nick from score_history where score = (select min(score) from score_history)");
+	    		ResultSet resultSet = statement.executeQuery();
+	    		if(resultSet.next()) {
+	    			party.add(resultSet.getString(1));
+	                outputList.setListData(party);
+	    		}
+            }
+            catch(SQLException exp) {
+            	System.out.println(exp);
+            }
+        }
+        
+        
         if (e.getSource().equals(finished)) {
             win.hide();
         }
