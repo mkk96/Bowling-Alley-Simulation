@@ -53,9 +53,10 @@ class ControlDesk extends Thread {
 
 	/** The number of lanes represented */
 	private int numLanes;
+	public int ExtraGame=-1;
 	
 	/** The collection of subscribers */
-	private ControlDeskSubscriber subscribers;
+	public ControlDeskSubscriber subscribers;
 
     /**
      * Constructor for the ControlDesk class
@@ -63,6 +64,22 @@ class ControlDesk extends Thread {
      * @param numlanes	the number of lanes to be represented
      *
      */
+	
+	public ControlDesk(int numLanes, int framesAllowed,int firstScore,int secondScore) {
+		this.numLanes = numLanes;
+		lanes = new HashSet(numLanes);
+		partyQueue = new Queue();
+		this.ExtraGame=1;
+		subscribers=new ControlDeskSubscriber();
+		//subscribers = new ControlDeskSubscriber();
+
+		for (int i = 0; i < numLanes; i++) {
+			lanes.add(new Lane(framesAllowed,firstScore,secondScore));
+		}
+		
+		this.start();
+	}
+
 
 	public ControlDesk(int numLanes) {
 		this.numLanes = numLanes;

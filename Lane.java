@@ -135,6 +135,8 @@ import java.util.Vector;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Date;
+import java.util.Random;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 public class Lane extends Thread implements PinsetterObserver {
 	private Party party;
@@ -159,6 +161,17 @@ public class Lane extends Thread implements PinsetterObserver {
 	private boolean initial_halt;
 	private boolean game_completed;
 	private Bowler currentThrower;
+	
+	private int framesAllowed = 9;
+	
+	int firstScore = 0;
+	int secondScore = 0;
+	
+	private int highestPlayer;
+	private int secondHighestPlayer;
+	private boolean isFirstGame = true;
+	private int[][] cumulativeScores;
+	
 	public Lane() {
 		setter = new Pinsetter();
 		scores = new HashMap<Bowler, int[]>();
@@ -175,6 +188,23 @@ public class Lane extends Thread implements PinsetterObserver {
 		currentCumulScores = new ScoreCount(bowlIndex);
 		this.start();
 	}
+	
+	public boolean isFirstGame() {
+		return isFirstGame;
+	}
+	
+	
+	public Lane(int framesAllowed,int firstScore,int secondScore) {
+		
+		this();
+		this.isFirstGame = false;
+		this.framesAllowed = framesAllowed - 1;
+		this.firstScore=firstScore;
+		this.secondScore=secondScore;
+		
+	}
+
+	
 	public void run() {
 		while (true) {
 			if (partyAssigned && !gameFinished) {	// we have a party on this lane,
@@ -196,7 +226,7 @@ public class Lane extends Thread implements PinsetterObserver {
 						ball++;
 					 }
 
-					if (frameNumber == 9){
+					if (frameNumber == this.framesAllowed){
 						finalScores[bowlIndex][gameNumber] = currentCumulScores.getFinalScore();
 						try{
 							Date date = new Date();
@@ -220,54 +250,60 @@ public class Lane extends Thread implements PinsetterObserver {
 					resetBowlerIterator();
 					bowlIndex = 0;
 					currentCumulScores.setBowlIndex(bowlIndex);
-					if (frameNumber > 9) {
+					if (frameNumber > this.framesAllowed) {
 						gameFinished = true;
 						gameNumber++;
 					}
 				}
 				
 			} else if (partyAssigned && gameFinished) {
-				EndGamePrompt egp = new EndGamePrompt( ((Bowler) party.getMembers().get(0)).getNickName() + "'s Party" );
-				int result = egp.getResult();
-				egp.distroy();
-				egp = null;
-
-
-				System.out.println("result was: " + result);
-
-				// TODO: send record of scores to control desk
-				if (result == 1) {	// yes, want to play again
-					initial_halt=false;
-					game_completed=true;
-					resetScores();
-					currentCumulScores.reset(party.getMembers().size());
-					publish();
-					resetBowlerIterator();
-					
-					game_completed=false;
-
-				} else if (result == 2) {// no, dont want to play another game
-					Vector printVector;
-					EndGameReport egr = new EndGameReport( ((Bowler)party.getMembers().get(0)).getNickName() + "'s Party", party);
-					printVector = egr.getResult();
-					partyAssigned = false;
-					Iterator scoreIt = party.getMembers().iterator();
-					party = null;
-					partyAssigned = false;
-					publish();
-					int myIndex = 0;
-					while (scoreIt.hasNext()){
-						Bowler thisBowler = (Bowler)scoreIt.next();
-						ScoreReport sr = new ScoreReport( thisBowler, finalScores[myIndex++], gameNumber );
-						sr.sendEmail(thisBowler.getEmail());
-						Iterator printIt = printVector.iterator();
-						while (printIt.hasNext()){
-							if (thisBowler.getNick() == (String)printIt.next()){
-								System.out.println("Printing " + thisBowler.getNick());
-								sr.sendPrintout();
+				if (isFirstGame) {
+					handleEndGame();
+					isFirstGame = false;
+				} 
+				else {
+					EndGamePrompt egp = new EndGamePrompt( ((Bowler) party.getMembers().get(0)).getNickName() + "'s Party" );
+					int result = egp.getResult();
+					egp.distroy();
+					egp = null;
+	
+	
+					System.out.println("result was: " + result);
+	
+					// TODO: send record of scores to control desk
+					if (result == 1) {	// yes, want to play again
+						initial_halt=false;
+						game_completed=true;
+						resetScores();
+						currentCumulScores.reset(party.getMembers().size());
+						publish();
+						resetBowlerIterator();
+						
+						game_completed=false;
+	
+					} else if (result == 2) {// no, dont want to play another game
+						Vector printVector;
+						EndGameReport egr = new EndGameReport( ((Bowler)party.getMembers().get(0)).getNickName() + "'s Party", party);
+						printVector = egr.getResult();
+						partyAssigned = false;
+						Iterator scoreIt = party.getMembers().iterator();
+						party = null;
+						partyAssigned = false;
+						publish();
+						int myIndex = 0;
+						while (scoreIt.hasNext()){
+							Bowler thisBowler = (Bowler)scoreIt.next();
+							ScoreReport sr = new ScoreReport( thisBowler, finalScores[myIndex++], gameNumber );
+							sr.sendEmail(thisBowler.getEmail());
+							Iterator printIt = printVector.iterator();
+							while (printIt.hasNext()){
+								if (thisBowler.getNick() == (String)printIt.next()){
+									System.out.println("Printing " + thisBowler.getNick());
+									sr.sendPrintout();
+								}
 							}
+	
 						}
-
 					}
 				}
 			}
@@ -279,6 +315,67 @@ public class Lane extends Thread implements PinsetterObserver {
 			} catch (Exception e) {}
 		}
 	}
+	
+	private void handleEndGame() {
+
+		int totalBowlers = party.getMembers().size();
+		int max = 0, smax = 0, sind = 0, find = 0, i;
+		this.cumulativeScores = currentCumulScores.getCumulScores();
+		i = 0;
+		if (totalBowlers<=1) {
+			return;
+		}
+		while (i < totalBowlers) {
+			if (cumulativeScores[i][9] > max) {
+				smax = max;
+				sind = find;
+				max = cumulativeScores[i][9];
+				find = i;
+			} else if (cumulativeScores[i][9] > smax) {
+				smax = cumulativeScores[i][9];
+				sind = i;
+			}
+			i++;
+		}
+
+		highestPlayer = find;
+		secondHighestPlayer = sind;
+
+		for (i = 0; i < sind; i++) {
+			currentThrower = (Bowler) bowlerIterator.next();
+		}
+		// setter.ballThrown();
+		Random rand = new Random();
+		int randomNum = rand.nextInt((10 - 5) + 1) + 5;
+		showMessageDialog(null, "Second higest player scored "+randomNum+" in extra throw");
+		handleExtraChance(randomNum);
+	}
+
+	private void handleExtraChance(int pinsDown) {
+		int highestScore = cumulativeScores[highestPlayer][9];
+		int secondHighestScore = cumulativeScores[secondHighestPlayer][9] + pinsDown;
+
+//		if (highestScore > secondHighestScore) {
+//			showMessageDialog(null, "The second highest player is not able to cross the highest player and the game ended");
+//			return;
+//		}
+
+		Vector bowlers = new Vector(party.getMembers());
+		Vector partyNicks = new Vector();
+		partyNicks.add(((Bowler) bowlers.get(highestPlayer)).getNick());
+		partyNicks.add(((Bowler) bowlers.get(secondHighestPlayer)).getNick());
+
+		ControlDesk extraControlDesk = new ControlDesk(1, 3, highestScore, secondHighestScore);
+		ControlDeskView extraCDV = new ControlDeskView(extraControlDesk, 2);
+		int num = 9;
+		ControlDeskSubscriber cdsExtra = new ControlDeskSubscriber();
+		cdsExtra.subscribe(extraControlDesk, extraCDV);
+		num *= 2;
+		extraControlDesk.addPartyQueue(partyNicks);
+		return;
+	}
+
+	
 	public void receivePinsetterEvent(PinsetterEvent pe) {
 		
 		if (pe.pinsDownOnThisThrow() >=  0) {	

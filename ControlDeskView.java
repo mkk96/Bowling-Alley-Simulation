@@ -23,7 +23,7 @@ import java.util.*;
 
 public class ControlDeskView implements ActionListener, ControlDeskObserver {
 
-	private JButton addParty, finished, assign, showScore;
+	private JButton addParty, finished, assign, showScore,resume;
 	private JFrame win;
 	private JList partyList;
 	
@@ -74,7 +74,14 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 		assignPanel.setLayout(new FlowLayout());
 		assign.addActionListener(this);
 		assignPanel.add(assign);
-//		controlsPanel.add(assignPanel);
+		controlsPanel.add(assignPanel);
+		
+		resume = new JButton("Resume Game");
+		JPanel resumepannel = new JPanel();
+		resumepannel.setLayout(new FlowLayout());
+		resume.addActionListener(this);
+		resumepannel.add(resume);
+		controlsPanel.add(resumepannel);
 
 		finished = new JButton("Finished");
 		JPanel finishedPanel = new JPanel();
@@ -166,6 +173,9 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 			ShowScores showScoreWin = new ShowScores();
 		}
 		if (e.getSource().equals(assign)) {
+			controlDesk.assignLane();
+		}
+		if (e.getSource().equals(resume)) {
 			controlDesk.assignLane();
 		}
 		if (e.getSource().equals(finished)) {

@@ -19,6 +19,10 @@ public class ControlDeskSubscriber {
 	public void subscribe(ControlDeskObserver adding) {
 		subscribers.add(adding);
 	}
+	
+	public static void subscribe(ControlDesk controlDesk, ControlDeskObserver adding) {
+        controlDesk.subscribers.subscribers.add(adding);
+    }
 
     /**
      * Broadcast an event to subscribing objects.
